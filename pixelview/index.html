@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PixelView - Swipe. Click. Explore.</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="logo" aria-label="PixelView">
+            <i class="fas fa-camera-retro" aria-hidden="true"></i>
+            <span>PixelView</span>
+        </div>
+        <p class="subtitle">Swipe. Click. Explore.</p>
+        <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+            <i class="fas fa-moon" aria-hidden="true"></i>
+        </button>
+    </header>
+
+    <!-- Main Controls -->
+    <div class="controls">
+        <div class="filter-buttons" role="tablist" aria-label="Categories">
+            <button class="filter-btn active" data-category="all"><i class="fas fa-border-all"></i> All</button>
+            <button class="filter-btn" data-category="nature"><i class="fas fa-leaf"></i> Nature</button>
+            <button class="filter-btn" data-category="city"><i class="fas fa-city"></i> City</button>
+            <button class="filter-btn" data-category="cricket"><i class="fas fa-baseball-bat-ball"></i> Cricket</button>
+            <button class="filter-btn" data-category="companies"><i class="fas fa-building"></i> Companies</button>
+            <button class="filter-btn" data-category="travel"><i class="fas fa-plane"></i> Travel</button>
+            <button class="filter-btn" data-category="animals"><i class="fas fa-paw"></i> Animals</button>
+            <button class="filter-btn" data-category="food"><i class="fas fa-utensils"></i> Food</button>
+            <button class="filter-btn" data-category="edited"><i class="fas fa-wand-magic-sparkles"></i> Edited</button>
+        </div>
+
+        <div class="action-buttons">
+            <button class="action-btn select-mode-btn" id="selectModeBtn" title="Select images">
+                <i class="fas fa-check-square"></i> Select
+            </button>
+
+            <button class="action-btn" id="selectAllBtn" style="display:none;" title="Select all in this view">
+                <i class="fas fa-check-double"></i> Select All
+            </button>
+
+            <button class="action-btn delete-btn icon-only" id="deleteSelectedBtn" disabled title="Delete selected">
+                <i class="fas fa-trash"></i>
+            </button>
+
+            <select class="upload-select" id="uploadCategory" title="Upload category">
+                <option value="auto">Upload → Current category</option>
+                <option value="nature">Nature</option>
+                <option value="city">City</option>
+                <option value="cricket">Cricket</option>
+                <option value="companies">Companies</option>
+                <option value="travel">Travel</option>
+                <option value="animals">Animals</option>
+                <option value="food">Food</option>
+            </select>
+
+            <button class="action-btn icon-only" id="uploadBtn" title="Upload photos">
+                <i class="fas fa-upload"></i>
+            </button>
+            <input class="upload-input" id="uploadInput" type="file" accept="image/*" multiple />
+        </div>
+    </div>
+
+    <!-- Image Gallery -->
+    <main class="gallery-container">
+        <div class="gallery" id="gallery" aria-live="polite">
+            <!-- Images inserted here -->
+        </div>
+    </main>
+
+    <!-- Lightbox Modal -->
+    <div class="lightbox" id="lightbox" aria-hidden="true" role="dialog" aria-label="Image viewer">
+        <button class="lightbox-close" id="lightboxClose" aria-label="Close">
+            <i class="fas fa-times"></i>
+        </button>
+
+        <!-- Navigation Buttons -->
+        <button class="nav-btn prev-btn" id="prevBtn" aria-label="Previous">
+            <i class="fas fa-chevron-left"></i>
+        </button>
+        <button class="nav-btn next-btn" id="nextBtn" aria-label="Next">
+            <i class="fas fa-chevron-right"></i>
+        </button>
+
+        <div class="lightbox-content">
+            <div class="image-container" id="imageContainer">
+                <div class="image-viewport" id="imageViewport">
+                    <img src="" alt="" id="lightboxImage" crossorigin="anonymous" referrerpolicy="no-referrer" />
+                    <div class="crop-overlay" id="cropOverlay" aria-hidden="true"></div>
+                </div>
+
+                <div class="image-info">
+                    <h3 id="imageTitle"></h3>
+                    <p id="imageCategory"></p>
+                </div>
+            </div>
+
+            <!-- Editor Panel -->
+            <div class="editor-panel" id="editorPanel">
+                <div class="editor-header">
+                    <h3><i class="fas fa-sliders-h"></i> Editor</h3>
+                    <div class="editor-actions">
+                        <button class="editor-btn save-btn" id="saveEditBtn" title="Save edited image">
+                            <i class="fas fa-save"></i> Save
+                        </button>
+                        <button class="editor-btn discard-btn" id="discardEditBtn" title="Discard changes">
+                            <i class="fas fa-times"></i> Discard
+                        </button>
+                    </div>
+                </div>
+
+                <div class="editor-tabs">
+                    <button class="tab-btn active" data-tab="filters"><i class="fas fa-magic"></i> Filters</button>
+                    <button class="tab-btn" data-tab="adjustments"><i class="fas fa-sun"></i> Adjust</button>
+                    <button class="tab-btn" data-tab="transform"><i class="fas fa-crop"></i> Transform</button>
+                </div>
+
+                <!-- Filters Tab -->
+                <div class="tab-content active" id="filtersTab">
+                    <div class="tool-grid" id="filtersGrid">
+                        <div class="tool-tile" data-filter="none" title="Clear">
+                            <i class="fas fa-rotate-left"></i>
+                            <span>Clear</span>
+                        </div>
+                        <div class="tool-tile" data-filter="grayscale" title="Black & White">
+                            <i class="fas fa-circle-half-stroke"></i>
+                            <span>B & W</span>
+                        </div>
+                        <div class="tool-tile" data-filter="night" title="Night">
+                            <i class="fas fa-moon"></i>
+                            <span>Night</span>
+                        </div>
+                        <div class="tool-tile" data-filter="film" title="Film">
+                            <i class="fas fa-film"></i>
+                            <span>Film</span>
+                        </div>
+                        <div class="tool-tile" data-filter="vintage" title="Vintage">
+                            <i class="fas fa-camera"></i>
+                            <span>Vintage</span>
+                        </div>
+                        <div class="tool-tile" data-filter="pop" title="Pop">
+                            <i class="fas fa-bolt"></i>
+                            <span>Pop</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Adjustments Tab -->
+                <div class="tab-content" id="adjustmentsTab">
+                    <div class="control-group">
+                        <div class="control-left"><i class="fas fa-sun"></i><label>Brightness <span id="brightnessVal">100%</span></label></div>
+                        <input type="range" id="brightness" min="0" max="200" value="100" />
+                    </div>
+                    <div class="control-group">
+                        <div class="control-left"><i class="fas fa-circle-half-stroke"></i><label>Contrast <span id="contrastVal">100%</span></label></div>
+                        <input type="range" id="contrast" min="0" max="200" value="100" />
+                    </div>
+                    <div class="control-group">
+                        <div class="control-left"><i class="fas fa-droplet"></i><label>Saturation <span id="saturateVal">100%</span></label></div>
+                        <input type="range" id="saturate" min="0" max="200" value="100" />
+                    </div>
+                    <div class="control-group">
+                        <div class="control-left"><i class="fas fa-wind"></i><label>Blur <span id="blurVal">0px</span></label></div>
+                        <input type="range" id="blur" min="0" max="12" value="0" />
+                    </div>
+                    <div class="control-group">
+                        <div class="control-left"><i class="fas fa-feather-pointed"></i><label>Fade <span id="fadeVal">100%</span></label></div>
+                        <input type="range" id="fade" min="0" max="100" value="100" />
+                    </div>
+                    <div class="control-group">
+                        <div class="control-left"><i class="fas fa-mug-hot"></i><label>Sepia <span id="sepiaVal">0%</span></label></div>
+                        <input type="range" id="sepia" min="0" max="100" value="0" />
+                    </div>
+                </div>
+
+                <!-- Transform Tab -->
+                <div class="tab-content" id="transformTab">
+                    <div class="control-group">
+                        <div class="control-left"><i class="fas fa-crop"></i><label>Crop</label></div>
+                        <div class="crop-controls">
+                            <button class="crop-btn active" data-crop="none"><i class="fas fa-expand"></i> Original</button>
+                            <button class="crop-btn" data-crop="1:1"><i class="fas fa-square"></i> 1:1</button>
+                            <button class="crop-btn" data-crop="4:3"><i class="fas fa-rectangle-wide"></i> 4:3</button>
+                            <button class="crop-btn" data-crop="16:9"><i class="fas fa-rectangle-list"></i> 16:9</button>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <div class="control-left"><i class="fas fa-rotate"></i><label>Rotate</label></div>
+                        <div class="rotate-controls">
+                            <button class="rotate-btn" data-rotate="-90" title="Rotate left"><i class="fas fa-undo"></i></button>
+                            <button class="rotate-btn" data-rotate="90" title="Rotate right"><i class="fas fa-redo"></i></button>
+                            <button class="rotate-btn" data-rotate="180" title="Flip 180"><i class="fas fa-sync"></i></button>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <div class="control-left"><i class="fas fa-arrows-left-right"></i><label>Flip</label></div>
+                        <div class="flip-controls">
+                            <button class="flip-btn" data-flip="h"><i class="fas fa-arrows-alt-h"></i> Horizontal</button>
+                            <button class="flip-btn" data-flip="v"><i class="fas fa-arrows-alt-v"></i> Vertical</button>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <div class="control-left"><i class="fas fa-magnifying-glass"></i><label>Scale <span id="scaleVal">100%</span></label></div>
+                        <input type="range" id="scale" min="50" max="150" value="100" />
+                    </div>
+                </div>
+            </div>
+
+            <!-- Lightbox Actions -->
+            <div class="lightbox-actions">
+                <button class="lightbox-btn" id="editBtn"><i class="fas fa-edit"></i> Edit</button>
+                <button class="lightbox-btn" id="downloadBtn"><i class="fas fa-download"></i> Download</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Selection Indicator -->
+    <div class="selection-indicator" id="selectionIndicator">
+        <span id="selectedCount">0</span> selected
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast">
+        <span id="toastMessage"></span>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
