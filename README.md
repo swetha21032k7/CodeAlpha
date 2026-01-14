@@ -68,12 +68,6 @@ PixelView/
 ├── index.html
 ├── style.css
 ├── script.js
-├── images/
-│   ├── nature/
-│   ├── city/
-│   ├── animals/
-│   ├── cricket/
-│   └── mnc/
 └── README.md
 
 🎯 Project Purpose
